@@ -1,4 +1,4 @@
-package com.example.diego.test03
+package com.example.diego.DetectorCortes
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("com.example.diego.test03", appContext.packageName)
+        assertEquals("com.example.diego.DetectorCortes", appContext.packageName)
     }
 }

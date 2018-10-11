@@ -1,4 +1,4 @@
-package com.example.diego.test03
+package com.example.diego.DetectorCortes
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -85,6 +85,11 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             }else{
                 var lugares: Array<String>
                 for (i in 0..num){
+                    //evitar crasheo al ingresar 10 lugares
+                    if(count == num+1){
+                        Toast.makeText(this, "Cantidad máxima alcanzada", Toast.LENGTH_SHORT).show()
+                        break
+                    }
                     if(lugarLv?.get(i).equals("")){
                         lugarLv?.set(i, lugar)
                         telefonoLv?.set(i, telefono)

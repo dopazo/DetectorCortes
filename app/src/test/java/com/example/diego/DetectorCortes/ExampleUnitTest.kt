@@ -1,4 +1,4 @@
-package com.example.diego.test03
+package com.example.diego.DetectorCortes
 
 import org.junit.Test
 
