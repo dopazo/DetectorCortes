@@ -22,15 +22,15 @@
             android:paddingRight="5dp" />
 
         <EditText
-            android:id="@+id/editText_Telefono"
+            android:id="@+id/editText_Numero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints=""
             android:ems="10"
-            android:hint="@string/app_Telefono"
+            android:hint="@string/app_Numero"
             android:inputType="phone"
             android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:autofillHints="" />
+            android:paddingRight="5dp" />
 
         <Button
             android:id="@+id/button_Agregar"

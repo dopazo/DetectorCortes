@@ -1,0 +1,121 @@
+{
+  "project_info": {
+    "project_number": "290058898146",
+    "firebase_url": "https://casasegura-b6acb.firebaseio.com",
+    "project_id": "casasegura-b6acb",
+    "storage_bucket": "casasegura-b6acb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290058898146:android:0768338cc885037d",
+        "android_client_info": {
+          "package_name": "com.example.diego.DetectorCortes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "290058898146-pjhhvr3mtrg64dhdjanml2003cseaub9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.diego.DetectorCortes",
+            "certificate_hash": "6d7ace46e5ba7cc3ea07339ec67b3091e7bffec9"
+          }
+        },
+        {
+          "client_id": "290058898146-jrot8gm9efjior397300maj6metub412.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.diego.DetectorCortes",
+            "certificate_hash": "23c38f8908bd4984ac8c71b861f59d22cfe10adc"
+          }
+        },
+        {
+          "client_id": "290058898146-4ahc33gdpu8s867d1ds5ep8gms2jo9o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1gDASBcKT18N-JRHCKpTJxfpwrj68fA4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "290058898146-4ahc33gdpu8s867d1ds5ep8gms2jo9o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "290058898146-389h1nqq25ps5c2i1ljfup3vdvct86ji.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "prograProf.Detector-Corriente"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290058898146:android:dda7a12367c85f70",
+        "android_client_info": {
+          "package_name": "com.example.diego.test03"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "290058898146-nqgi3mtif0l6of4tasfjn4j39ba77ukg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.diego.test03",
+            "certificate_hash": "a090c20adddabd582e5d4e86f0b133c2c8ba616a"
+          }
+        },
+        {
+          "client_id": "290058898146-4ahc33gdpu8s867d1ds5ep8gms2jo9o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1gDASBcKT18N-JRHCKpTJxfpwrj68fA4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "290058898146-4ahc33gdpu8s867d1ds5ep8gms2jo9o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "290058898146-389h1nqq25ps5c2i1ljfup3vdvct86ji.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "prograProf.Detector-Corriente"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
