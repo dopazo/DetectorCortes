@@ -26,14 +26,21 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     private var lugar = ""
     private var Numero = ""
     internal var lista: ListView? = null
-    private var num = 10
+    private var num = 20
     private var count = 1
     internal var lugarLv: Array<String>? = null
     internal var NumeroLv: Array<String>? = null
 
+    /*
+    var key = arrayOfNulls<String>(20)
+    var estado = arrayOfNulls<String>(20)
+    var textLugar = arrayOfNulls<String>(20)
+    var textNumero = arrayOfNulls<String>(20)
+    */
+
     //conectar a firebase
     var database = FirebaseDatabase.getInstance()
-    var myRef = database.getReference("Devices")
+    var myRef = database.getReference("Dispositivos")
 
     companion object {
         val TAG = "ChatLog"
@@ -59,7 +66,9 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
 
         //READ DATA FROM FIREBASE
-        val readPath = myRef.child("probando")
+        val readPath = myRef//.child("probando")
+
+
         readPath.addValueEventListener(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError?) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -67,12 +76,61 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
             override fun onDataChange(snapshot: DataSnapshot?) {
                 val children = snapshot!!.children
+                var largo = snapshot.getChildrenCount().toInt()
+                num = largo
                 children.forEach {
-                    println(it.toString())
+                    //println(it.toString())
                     val dataReaded = it.toString()
-                    Toast.makeText(applicationContext , dataReaded, Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(applicationContext , dataReaded, Toast.LENGTH_SHORT).show()
+                    var lugares: Array<String>
+                    for (i in 0..num){
+                        if(count == num+1){
+                            //Toast.makeText(applicationContext, "No se pudo cargar todos los dispositivos", Toast.LENGTH_SHORT).show()
+                            break
+                        }
+                        if(lugarLv?.get(i).equals("")){
+
+                            //asignar valores descargador de firebase
+
+                            /*
+                            key[i] = it.child("key").value.toString()
+                            estado[i] = it.child("Estado_Corte_Energia").value.toString()
+                            textLugar[i] = it.child("Lugar").value.toString()
+                            textNumero[i] = it.child("Telefono").value.toString()
+                            */
+
+
+                            val key = it.child("key").value.toString()
+                            val estado = it.child("Estado_Corte_Energia").value.toString()
+                            val textLugar = it.child("Lugar").value.toString()
+                            val textNumero = it.child("Telefono").value.toString()
+
+                            //timestamp system.currentmillis
+                            Toast.makeText(applicationContext, "descargando datos", Toast.LENGTH_SHORT).show()
+
+                            lugarLv?.set(i, textLugar)
+                            NumeroLv?.set(i, textNumero)
+                            lugares = Array(count,{""})
+                            for (j in 0..i){
+                                lugares[j] = lugarLv?.get(j) as String
+                            }
+                            //val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1,lugares)
+                            val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1,lugares)
+                            listaLugares!!.adapter = adapter
+                            count++
+                            break
+
+                        }
+                    }
+
+                    /*
+                    val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1,textLugar)
+                    listaLugares!!.adapter = adapter
+                    */
+
                 }
             }
+
         })
 
 
@@ -118,10 +176,11 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                 var lugares: Array<String>
                 for (i in 0..num){
                     //evitar crasheo al ingresar 20 lugares
+                    /*
                     if(count == num+1){
                         Toast.makeText(this, "Cantidad máxima alcanzada", Toast.LENGTH_SHORT).show()
                         break
-                    }
+                    }*/
                     if(lugarLv?.get(i).equals("")){
 
                         //subir a firebase
@@ -134,12 +193,14 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                         Log.d(TAG, key)
 
                         myRef!!.child(key.toString()).child("Lugar").setValue(textLugar)
-                        myRef!!.child(key.toString()).child("Numero").setValue(textNumero)
+                        myRef!!.child(key.toString()).child("Telefono").setValue(textNumero)
                         myRef!!.child(key.toString()).child("Estado_Corte_Energia").setValue("ON")
                         myRef!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
-                        //timrstamp system.currentmillis
-                        Toast.makeText(this, "intentando subir a firebase", Toast.LENGTH_SHORT).show()
+                        //timestamp system.currentmillis
+                        Toast.makeText(this, "subiendo a firebase", Toast.LENGTH_SHORT).show()
 
+                        /*
+                        //TODO: no poner los que he puesto, sino que los que subi, pues el que puse se subió
                         lugarLv?.set(i, lugar)
                         NumeroLv?.set(i, Numero)
                         lugares = Array(count,{""})
@@ -149,6 +210,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lugares)
                         listaLugares!!.adapter = adapter
                         count++
+                        */
                         break
                     }
 
