@@ -7,6 +7,15 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorButtonNormal">@color/colorButton</item>
+        <item name="android:listViewStyle">@style/ListViewStyle</item>
     </style>
 
+    <style name="ListViewStyle" parent="android:style/Widget.ListView">
+        <item name="background">@android:color/white</item>
+        <item name="android:divider">@android:color/darker_gray</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:drawSelectorOnTop">false</item>
+        <item name="android:cacheColorHint">#00000000</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
 </resources>

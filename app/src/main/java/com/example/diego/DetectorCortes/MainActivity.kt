@@ -1,19 +1,23 @@
 package com.example.diego.DetectorCortes
 
+import android.content.Context
+import android.graphics.Color
+import android.os.Build.ID
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.annotation.LayoutRes
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
-import com.google.firebase.FirebaseError
 import kotlinx.android.synthetic.main.activity_main.*
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.FirebaseDatabase
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
@@ -25,14 +29,16 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     private var button: Button? = null
     private var lugar = ""
     private var Numero = ""
-    internal var lista: ListView? = null
+
     private var num = 20
     private var count = 1
+    internal var keyLv: Array<String>? = null
     internal var lugarLv: Array<String>? = null
     internal var NumeroLv: Array<String>? = null
+    internal var estadoLv: Array<String>? = null
 
     /*
-    var key = arrayOfNulls<String>(20)
+    var ID = arrayOfNulls<String>(20)
     var estado = arrayOfNulls<String>(20)
     var textLugar = arrayOfNulls<String>(20)
     var textNumero = arrayOfNulls<String>(20)
@@ -40,7 +46,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
     //conectar a firebase
     var database = FirebaseDatabase.getInstance()
-    var myRef = database.getReference("Dispositivos")
+    var myRef = database.getReference("Devices")
 
     companion object {
         val TAG = "ChatLog"
@@ -59,16 +65,14 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         button!!.setOnClickListener(this)
         editLugar?.addTextChangedListener(this)
         editNumero?.addTextChangedListener(this)
-        lista?.findViewById<ListView>(R.id.listaLugares)
 
+        keyLv = Array<String>(20, {""})
         lugarLv = Array<String>(20, {""})
         NumeroLv = Array<String>(20, {""})
-
+        estadoLv = Array<String>(20, {""})
 
         //READ DATA FROM FIREBASE
-        val readPath = myRef//.child("probando")
-
-
+        val readPath = myRef//.
         readPath.addValueEventListener(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError?) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -83,24 +87,27 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                     val dataReaded = it.toString()
                     //Toast.makeText(applicationContext , dataReaded, Toast.LENGTH_SHORT).show()
                     var lugares: Array<String>
+                    var estados: Array<String>
+                    var keys: Array<String>
                     for (i in 0..num){
                         if(count == num+1){
                             //Toast.makeText(applicationContext, "No se pudo cargar todos los dispositivos", Toast.LENGTH_SHORT).show()
-                            break
+                            //break
                         }
                         if(lugarLv?.get(i).equals("")){
 
                             //asignar valores descargador de firebase
 
                             /*
-                            key[i] = it.child("key").value.toString()
+                            ID[i] = it.child("ID").value.toString()
                             estado[i] = it.child("Estado_Corte_Energia").value.toString()
                             textLugar[i] = it.child("Lugar").value.toString()
                             textNumero[i] = it.child("Telefono").value.toString()
                             */
 
-
-                            val key = it.child("key").value.toString()
+                            Toast.makeText(applicationContext, it.toString(), Toast.LENGTH_SHORT).show()
+                            //val key = it.child("key").value.toString()
+                            val key = it.key.toString()
                             val estado = it.child("Estado_Corte_Energia").value.toString()
                             val textLugar = it.child("Lugar").value.toString()
                             val textNumero = it.child("Telefono").value.toString()
@@ -108,14 +115,34 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                             //timestamp system.currentmillis
                             Toast.makeText(applicationContext, "descargando datos", Toast.LENGTH_SHORT).show()
 
+                            keyLv?.set(i, key)
                             lugarLv?.set(i, textLugar)
                             NumeroLv?.set(i, textNumero)
+                            estadoLv?.set(i, estado)
+
                             lugares = Array(count,{""})
-                            for (j in 0..i){
-                                lugares[j] = lugarLv?.get(j) as String
+                            estados = Array(count,{""})
+                            keys = Array(count,{""})
+                            System.out.println("---------------------------------------------------");
+                            System.out.println("---------------------------------------------------");
+                            System.out.println("---------------------------------------------------");
+                                for (j in 0..i){
+                                    keys[j] = keyLv?.get(j) as String
+                                    lugares[j] = lugarLv?.get(j) as String
+                                    estados[j] = estadoLv?.get(j) as String
+                                    System.out.println(keys[j])
+                                    System.out.println(lugares[j])
+                                    System.out.println(estados[j])
+                                    System.out.println("---------------")
+                                    //que agregue el ultimo, actualmente agrega el primero
                             }
+                            System.out.println("---------------------------------------------------");
+                            System.out.println("---------------------------------------------------");
+                            System.out.println("---------------------------------------------------");
                             //val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1,lugares)
-                            val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1,lugares)
+                            val adapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1,estados)
+
+
                             listaLugares!!.adapter = adapter
                             count++
                             break
@@ -133,10 +160,19 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
         })
 
-
         //addTextChangedListener(this) <- muestra mini notificacion
     }
 
+    class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val entities: Array<String>):
+            ArrayAdapter<String>(context, layoutResource, entities) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val view = super.getView(position, convertView, parent)
+            val textView = view.findViewById<View>(android.R.id.text1) as TextView
+            textView.setTextColor(Color.BLUE)
+            return view
+        }
+    }
     //interface que se ejecuta despues de que ingresamos algo al campo de texto
     override fun afterTextChanged(s: Editable?) {
 
