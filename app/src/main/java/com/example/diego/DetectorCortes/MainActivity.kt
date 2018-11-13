@@ -18,6 +18,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.FirebaseDatabase
 import android.widget.TextView
+import com.example.diego.DetectorCortes.R.id.editText_Lugar
+import com.example.diego.DetectorCortes.R.id.editText_Numero
 
 class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
@@ -30,19 +32,12 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     private var lugar = ""
     private var Numero = ""
 
-    private var num = 20
-    private var count = 1
+
+    //clase con esto
     internal var keyLv: Array<String>? = null
     internal var lugarLv: Array<String>? = null
     internal var NumeroLv: Array<String>? = null
     internal var estadoLv: Array<String>? = null
-
-    /*
-    var ID = arrayOfNulls<String>(20)
-    var estado = arrayOfNulls<String>(20)
-    var textLugar = arrayOfNulls<String>(20)
-    var textNumero = arrayOfNulls<String>(20)
-    */
 
     //conectar a firebase
     var database = FirebaseDatabase.getInstance()
@@ -51,6 +46,9 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     companion object {
         val TAG = "ChatLog"
     }
+
+    private lateinit var colorAdapter: ColorAdapter
+
     //metodo que se ejecuta al iniciar la aplicacion
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,11 +64,11 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         editLugar?.addTextChangedListener(this)
         editNumero?.addTextChangedListener(this)
 
-        keyLv = Array<String>(20, {""})
-        lugarLv = Array<String>(20, {""})
-        NumeroLv = Array<String>(20, {""})
-        estadoLv = Array<String>(20, {""})
 
+        // ACA EL ADAPTER
+        val arreglo = ArrayList<Dispositivo>() //de la clase que creare
+        colorAdapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1,  arreglo)
+        //colorAdapter.setAlternateColor(getColor())
         //READ DATA FROM FIREBASE
         val readPath = myRef//.
         readPath.addValueEventListener(object : ValueEventListener{
@@ -80,82 +78,19 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
             override fun onDataChange(snapshot: DataSnapshot?) {
                 val children = snapshot!!.children
-                var largo = snapshot.getChildrenCount().toInt()
-                num = largo
+                colorAdapter!!.clear()
                 children.forEach {
-                    //println(it.toString())
-                    val dataReaded = it.toString()
-                    //Toast.makeText(applicationContext , dataReaded, Toast.LENGTH_SHORT).show()
-                    var lugares: Array<String>
-                    var estados: Array<String>
-                    var keys: Array<String>
-                    for (i in 0..num){
-                        if(count == num+1){
-                            //Toast.makeText(applicationContext, "No se pudo cargar todos los dispositivos", Toast.LENGTH_SHORT).show()
-                            //break
-                        }
-                        if(lugarLv?.get(i).equals("")){
+                    val key = it.key.toString()
+                    val estado = it.child("Estado_Corte_Energia").value.toString()
+                    val lugar = it.child("Lugar").value.toString()
+                    val numero = it.child("Telefono").value.toString()
 
-                            //asignar valores descargador de firebase
+                    val dispositivo = Dispositivo(key, estado, lugar, numero)
 
-                            /*
-                            ID[i] = it.child("ID").value.toString()
-                            estado[i] = it.child("Estado_Corte_Energia").value.toString()
-                            textLugar[i] = it.child("Lugar").value.toString()
-                            textNumero[i] = it.child("Telefono").value.toString()
-                            */
-
-                            Toast.makeText(applicationContext, it.toString(), Toast.LENGTH_SHORT).show()
-                            //val key = it.child("key").value.toString()
-                            val key = it.key.toString()
-                            val estado = it.child("Estado_Corte_Energia").value.toString()
-                            val textLugar = it.child("Lugar").value.toString()
-                            val textNumero = it.child("Telefono").value.toString()
-
-                            //timestamp system.currentmillis
-                            Toast.makeText(applicationContext, "descargando datos", Toast.LENGTH_SHORT).show()
-
-                            keyLv?.set(i, key)
-                            lugarLv?.set(i, textLugar)
-                            NumeroLv?.set(i, textNumero)
-                            estadoLv?.set(i, estado)
-
-                            lugares = Array(count,{""})
-                            estados = Array(count,{""})
-                            keys = Array(count,{""})
-                            System.out.println("---------------------------------------------------");
-                            System.out.println("---------------------------------------------------");
-                            System.out.println("---------------------------------------------------");
-                                for (j in 0..i){
-                                    keys[j] = keyLv?.get(j) as String
-                                    lugares[j] = lugarLv?.get(j) as String
-                                    estados[j] = estadoLv?.get(j) as String
-                                    System.out.println(keys[j])
-                                    System.out.println(lugares[j])
-                                    System.out.println(estados[j])
-                                    System.out.println("---------------")
-                                    //que agregue el ultimo, actualmente agrega el primero
-                            }
-                            System.out.println("---------------------------------------------------");
-                            System.out.println("---------------------------------------------------");
-                            System.out.println("---------------------------------------------------");
-                            //val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1,lugares)
-                            val adapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1,estados)
-
-
-                            listaLugares!!.adapter = adapter
-                            count++
-                            break
-
-                        }
-                    }
-
-                    /*
-                    val adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1,textLugar)
-                    listaLugares!!.adapter = adapter
-                    */
-
+                    colorAdapter!!.add(dispositivo)
+                    Log.d("------------->", key)
                 }
+                listaLugares!!.adapter = colorAdapter
             }
 
         })
@@ -163,13 +98,40 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         //addTextChangedListener(this) <- muestra mini notificacion
     }
 
-    class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val entities: Array<String>):
-            ArrayAdapter<String>(context, layoutResource, entities) {
+    inner class Dispositivo {
+
+        var key:String
+         var estado:String
+         var lugar:String
+         var numero:String
+
+        constructor(key:String, estado:String, lugar:String, numero:String): super() {
+            this.key = key
+            this.estado = estado
+            this.lugar = lugar
+            this.numero = numero
+        }
+    }
+
+    class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val entities: ArrayList<Dispositivo>):
+            ArrayAdapter<Dispositivo>(context, layoutResource, entities) { //clase
+
+        var color:Int = 0
+
+        fun setAlternateColor(color:Int) {
+            this.color = color
+        }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            //explicitar campo a usar
             val view = super.getView(position, convertView, parent)
             val textView = view.findViewById<View>(android.R.id.text1) as TextView
+            val dispositivo = this.entities.get(position)
+            textView.text = dispositivo.key + " - " + dispositivo.estado
             textView.setTextColor(Color.BLUE)
+            /*if (position%2 == 0) {
+                textView.setBackgroundColor(this.color)
+            }*/
             return view
         }
     }
@@ -209,48 +171,19 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             if (Numero?.equals("") ?: ("" === null)){
                 editNumero!!.requestFocus()
             }else{
-                var lugares: Array<String>
-                for (i in 0..num){
-                    //evitar crasheo al ingresar 20 lugares
-                    /*
-                    if(count == num+1){
-                        Toast.makeText(this, "Cantidad máxima alcanzada", Toast.LENGTH_SHORT).show()
-                        break
-                    }*/
-                    if(lugarLv?.get(i).equals("")){
+                val textLugar = editText_Lugar.text.toString()
+                val textNumero = editText_Numero.text.toString()
+                val key = myRef.push().key
+                Log.d(TAG, textLugar)
+                Log.d(TAG, textNumero)
+                Log.d(TAG, key)
 
-                        //subir a firebase
-
-                        val textLugar = editText_Lugar.text.toString()
-                        val textNumero = editText_Numero.text.toString()
-                        val key = myRef.push().key
-                        Log.d(TAG, textLugar)
-                        Log.d(TAG, textNumero)
-                        Log.d(TAG, key)
-
-                        myRef!!.child(key.toString()).child("Lugar").setValue(textLugar)
-                        myRef!!.child(key.toString()).child("Telefono").setValue(textNumero)
-                        myRef!!.child(key.toString()).child("Estado_Corte_Energia").setValue("ON")
-                        myRef!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
-                        //timestamp system.currentmillis
-                        Toast.makeText(this, "subiendo a firebase", Toast.LENGTH_SHORT).show()
-
-                        /*
-                        //TODO: no poner los que he puesto, sino que los que subi, pues el que puse se subió
-                        lugarLv?.set(i, lugar)
-                        NumeroLv?.set(i, Numero)
-                        lugares = Array(count,{""})
-                        for (j in 0..i){
-                            lugares[j] = lugarLv?.get(j) as String
-                        }
-                        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lugares)
-                        listaLugares!!.adapter = adapter
-                        count++
-                        */
-                        break
-                    }
-
-                }
+                myRef!!.child(key.toString()).child("Lugar").setValue(textLugar)
+                myRef!!.child(key.toString()).child("Telefono").setValue(textNumero)
+                myRef!!.child(key.toString()).child("Estado_Corte_Energia").setValue("ON")
+                myRef!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
+                //timestamp system.currentmillis
+                Toast.makeText(this, "subiendo a firebase", Toast.LENGTH_SHORT).show()
             }
         }
     }
