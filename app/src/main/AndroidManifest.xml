@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +29,16 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>
         </activity>
+        <service
+            android:name=".NotificationService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <receiver android:name=".MyCustomBroadcastReceiver">
+            <intent-filter>
+                <!-- REGISTER TO RECEIVE BOOT_COMPLETED EVENTS -->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>

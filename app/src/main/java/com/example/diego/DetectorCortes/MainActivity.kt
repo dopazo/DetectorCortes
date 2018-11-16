@@ -1,5 +1,6 @@
 package com.example.diego.DetectorCortes
 
+import android.app.Notification
 import android.content.Context
 import android.graphics.Color
 import android.os.Build.ID
@@ -18,10 +19,27 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.FirebaseDatabase
 import android.widget.TextView
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
+import android.support.annotation.RequiresApi
 import com.example.diego.DetectorCortes.R.id.editText_Lugar
 import com.example.diego.DetectorCortes.R.id.editText_Numero
 
 class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
+
+    lateinit var notificationManager: NotificationManager
+    lateinit var notificationChannel: NotificationChannel
+    lateinit var builder: Notification.Builder
+    private val channelId = "com.example.diego.DetectorCortes"
+    private val description = "Test Notification"
+
 
     //inicializacion de variables, junto con su tipo de variable
     //terminar el tipo en "?" para permitir que este vacia o null
@@ -66,18 +84,16 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         editNumero?.addTextChangedListener(this)
 
 
-        // ACA EL ADAPTER
+
         val arreglo = ArrayList<Dispositivo>() //de la clase que creare
         colorAdapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1,  arreglo)
         //colorAdapter.setAlternateColor(getColor())
         //READ DATA FROM FIREBASE
-        val readPath = myRef//.
+        val readPath = myRef//
         readPath.addValueEventListener(object : ValueEventListener{
-            override fun onCancelled(p0: DatabaseError?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot?) {
+            var hayCorte = 0
+            val corteEn = ArrayList<String>()
+            override fun onDataChange(snapshot: DataSnapshot) {
                 val children = snapshot!!.children
                 colorAdapter!!.clear()
                 children.forEach {
@@ -89,16 +105,43 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
                     //Toast.makeText(applicationContext, time, Toast.LENGTH_SHORT).show()
                     val dispositivo = Dispositivo(key, estado, lugar, numero) // y timestamp
-
+                    if(estado == "OFF" || estado == "false"){
+                        hayCorte = 1
+                        corteEn.add(lugar)
+                    }
                     colorAdapter!!.add(dispositivo)
                     Log.d("------------->", key)
                 }
                 listaLugares!!.adapter = colorAdapter
+                if(hayCorte == 1){
+                    showNotification(corteEn)
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
         })
+    }
 
-        //addTextChangedListener(this) <- muestra mini notificacion
+    public fun showNotification(corteEn: ArrayList<String>)
+    {
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        builder = Notification.Builder(this)
+                .setContentTitle("DetectorCortes")
+                .setContentText("Ha ocurrido un corte de energia en " + corteEn)
+                .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
+                .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                .setContentIntent(pendingIntent)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                //.setSound(soundUri);
+
+        notificationManager.notify(1234, builder.build())
     }
 
     inner class Dispositivo {
