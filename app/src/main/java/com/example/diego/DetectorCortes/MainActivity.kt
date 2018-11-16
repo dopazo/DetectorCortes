@@ -84,8 +84,10 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                     val estado = it.child("Estado_Corte_Energia").value.toString()
                     val lugar = it.child("Lugar").value.toString()
                     val numero = it.child("Telefono").value.toString()
+                    //val time = it.child("Timestamp").value.toString()
 
-                    val dispositivo = Dispositivo(key, estado, lugar, numero)
+                    //Toast.makeText(applicationContext, time, Toast.LENGTH_SHORT).show()
+                    val dispositivo = Dispositivo(key, estado, lugar, numero) // y timestamp
 
                     colorAdapter!!.add(dispositivo)
                     Log.d("------------->", key)
@@ -101,9 +103,10 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     inner class Dispositivo {
 
         var key:String
-         var estado:String
-         var lugar:String
-         var numero:String
+        var estado:String
+        var lugar:String
+        var numero:String
+        //var time:String
 
         constructor(key:String, estado:String, lugar:String, numero:String): super() {
             this.key = key
@@ -127,11 +130,14 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             val view = super.getView(position, convertView, parent)
             val textView = view.findViewById<View>(android.R.id.text1) as TextView
             val dispositivo = this.entities.get(position)
-            textView.text = dispositivo.key + " - " + dispositivo.estado
+            textView.text = dispositivo.lugar + " - " + dispositivo.estado
             textView.setTextColor(Color.BLUE)
-            /*if (position%2 == 0) {
-                textView.setBackgroundColor(this.color)
-            }*/
+            if (dispositivo.estado == "true" || dispositivo.estado == "ON") {
+                textView.setBackgroundColor(Color.GREEN)
+            }
+            else{
+                textView.setBackgroundColor(Color.RED)
+            }
             return view
         }
     }
