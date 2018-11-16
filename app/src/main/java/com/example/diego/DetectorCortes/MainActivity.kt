@@ -29,6 +29,8 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.support.annotation.RequiresApi
+import com.example.diego.DetectorCortes.R.id.editText_Lugar
+import com.example.diego.DetectorCortes.R.id.editText_Numero
 
 class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
@@ -81,20 +83,16 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         editNumero?.addTextChangedListener(this)
 
 
-        // ACA EL ADAPTER
+
         val arreglo = ArrayList<Dispositivo>() //de la clase que creare
         colorAdapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1,  arreglo)
         //colorAdapter.setAlternateColor(getColor())
         //READ DATA FROM FIREBASE
         val readPath = myRef//
         readPath.addValueEventListener(object : ValueEventListener{
-            override fun onCancelled(p0: DatabaseError?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
             var hayCorte = 0
             val corteEn = ArrayList<String>()
-            override fun onDataChange(snapshot: DataSnapshot?) {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 val children = snapshot!!.children
                 colorAdapter!!.clear()
                 children.forEach {
@@ -117,6 +115,10 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                 if(hayCorte == 1){
                     showNotification(corteEn)
                 }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
         })
