@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.title = "Add Device"
 
         //se asocian las variables a su objeto en la pantalla
         //"R." para buscar en la pantalla según tengo entendido
