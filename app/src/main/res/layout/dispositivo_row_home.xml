@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/nombredispositivoTxtV_row_home_ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Dispositivo"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/estado_label_row_home_ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:text="Estado:"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/nombredispositivoTxtV_row_home_ID"
+        app:layout_constraintStart_toEndOf="@+id/nombredispositivoTxtV_row_home_ID"
+        app:layout_constraintTop_toTopOf="@+id/nombredispositivoTxtV_row_home_ID" />
+
+    <TextView
+        android:id="@+id/estado_ONOFF_row_home_ID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="ON/OFF"
+        app:layout_constraintBottom_toBottomOf="@+id/estado_label_row_home_ID"
+        app:layout_constraintStart_toEndOf="@+id/estado_label_row_home_ID"
+        app:layout_constraintTop_toTopOf="@+id/estado_label_row_home_ID" />
+
+    <TextView
+        android:id="@+id/GSMLabelTxtV_row_home_ID"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="GSM#"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nombredispositivoTxtV_row_home_ID" />
+
+    <TextView
+        android:id="@+id/GSMNumeroTxtV_row_home_ID"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="966785432"
+        app:layout_constraintBottom_toBottomOf="@+id/GSMLabelTxtV_row_home_ID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/GSMLabelTxtV_row_home_ID"
+        app:layout_constraintTop_toTopOf="@+id/GSMLabelTxtV_row_home_ID" />
+
+</android.support.constraint.ConstraintLayout>

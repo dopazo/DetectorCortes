@@ -31,6 +31,7 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import com.example.diego.DetectorCortes.R.id.editText_Lugar
 import com.example.diego.DetectorCortes.R.id.editText_Numero
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     private var editNumero: EditText? = null
     private var button: Button? = null
     private var lugar = ""
-    private var Numero = ""
+    private var numero = ""
 
 
     //clase con esto
@@ -57,9 +58,11 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     internal var NumeroLv: Array<String>? = null
     internal var estadoLv: Array<String>? = null
 
-    //conectar a firebase
-    var database = FirebaseDatabase.getInstance()
-    var myRef = database.getReference("Devices")
+//    //conectar a firebase
+//    val duenoDispositivo = FirebaseAuth.getInstance().uid
+//    if (duenoDispositivo == null) return
+//    var database = FirebaseDatabase.getInstance()
+//    var myRef = database.getReference("/Devices/$duenoDispositivo")
 
     companion object {
         val TAG = "ChatLog"
@@ -72,6 +75,12 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.title = "Add Device"
+
+        //conectar a firebase
+        val duenoDispositivo = FirebaseAuth.getInstance().uid
+        if (duenoDispositivo == null) return
+        var database = FirebaseDatabase.getInstance()
+        var myRef = database.getReference("/Devices/$duenoDispositivo")
 
         //se asocian las variables a su objeto en la pantalla
         //"R." para buscar en la pantalla según tengo entendido
@@ -144,21 +153,21 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         notificationManager.notify(1234, builder.build())
     }
 
-    inner class Dispositivo {
-
-        var key:String
-        var estado:String
-        var lugar:String
-        var numero:String
-        //var time:String
-
-        constructor(key:String, estado:String, lugar:String, numero:String): super() {
-            this.key = key
-            this.estado = estado
-            this.lugar = lugar
-            this.numero = numero
-        }
-    }
+//    inner class Dispositivo {
+//
+//        var key:String
+//        var estado:String
+//        var lugar:String
+//        var numero:String
+//        //var time:String
+//
+//        constructor(key:String, estado:String, lugar:String, numero:String): super() {
+//            this.key = key
+//            this.estado = estado
+//            this.lugar = lugar
+//            this.numero = numero
+//        }
+//    }
 
     class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val entities: ArrayList<Dispositivo>):
             ArrayAdapter<Dispositivo>(context, layoutResource, entities) { //clase
@@ -174,9 +183,9 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             val view = super.getView(position, convertView, parent)
             val textView = view.findViewById<View>(android.R.id.text1) as TextView
             val dispositivo = this.entities.get(position)
-            textView.text = dispositivo.lugar + " - " + dispositivo.estado
+            textView.text = dispositivo.Lugar + " - " + dispositivo.Estado_Corte_Energia
             textView.setTextColor(Color.BLUE)
-            if (dispositivo.estado == "true" || dispositivo.estado == "ON") {
+            if (dispositivo.Estado_Corte_Energia == "true" || dispositivo.Estado_Corte_Energia == "ON") {
                 textView.setBackgroundColor(Color.GREEN)
             }
             else{
@@ -185,6 +194,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             return view
         }
     }
+
     //interface que se ejecuta despues de que ingresamos algo al campo de texto
     override fun afterTextChanged(s: Editable?) {
 
@@ -214,24 +224,33 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     private fun operacion(){
         //si hay dato vacio, se hace "focus" para indicar que lo llenee
         lugar = editLugar?.text.toString()
-        Numero = editNumero?.text.toString()
+        numero = editNumero?.text.toString()
         if(lugar?.equals("") ?: ("" === null)){
             editLugar!!.requestFocus()
         }else{
-            if (Numero?.equals("") ?: ("" === null)){
+            if (numero?.equals("") ?: ("" === null)){
                 editNumero!!.requestFocus()
             }else{
+//                //conectar a firebase
+//                var database = FirebaseDatabase.getInstance()
+//                var myRef = database.getReference("/Devices/$duenoDispositivo")
+
+                val duenoDispositivo = FirebaseAuth.getInstance().uid
+                if (duenoDispositivo == null) return
+
+                val reference = FirebaseDatabase.getInstance().getReference("/Devices/$duenoDispositivo")
+
                 val textLugar = editText_Lugar.text.toString()
                 val textNumero = editText_Numero.text.toString()
-                val key = myRef.push().key
+                val key = reference.push().key
                 Log.d(TAG, textLugar)
                 Log.d(TAG, textNumero)
                 Log.d(TAG, key)
 
-                myRef!!.child(key.toString()).child("Lugar").setValue(textLugar)
-                myRef!!.child(key.toString()).child("Telefono").setValue(textNumero)
-                myRef!!.child(key.toString()).child("Estado_Corte_Energia").setValue("ON")
-                myRef!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
+                reference!!.child(key.toString()).child("Lugar").setValue(textLugar)
+                reference!!.child(key.toString()).child("Telefono").setValue(textNumero)
+                reference!!.child(key.toString()).child("Estado_Corte_Energia").setValue("ON")
+                reference!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
                 //timestamp system.currentmillis
                 Toast.makeText(this, "subiendo a firebase", Toast.LENGTH_SHORT).show()
             }
