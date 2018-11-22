@@ -138,17 +138,21 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     {
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
+        val corteEnComas = corteEn.toString()
+                .replace(",", ", ")  //remove the commas
+                .replace("[", "")  //remove the right bracket
+                .replace("]", "")  //remove the left bracket
+                .trim()           //remove trailing spaces from partially initialized arrays
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         builder = Notification.Builder(this)
                 .setContentTitle("DetectorCortes")
-                .setContentText("Ha ocurrido un corte de energia en " + corteEn)
+                .setContentText("Ha ocurrido un corte de energia en " + corteEnComas)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setContentIntent(pendingIntent)
                 .setDefaults(Notification.DEFAULT_SOUND)
-                //.setSound(soundUri);
+        //.setSound(soundUri);
 
         notificationManager.notify(1234, builder.build())
     }
@@ -218,10 +222,10 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     //AL CLICKEAR EL BOTON AGREGAR
     override fun onClick(v: View?) {
         when(v!!.id) {
-            R.id.button_Agregar -> operacion()
+            R.id.button_Agregar -> sendNewDevice()
         }
     }
-    private fun operacion(){
+    private fun sendNewDevice(){
         //si hay dato vacio, se hace "focus" para indicar que lo llenee
         lugar = editLugar?.text.toString()
         numero = editNumero?.text.toString()
@@ -249,7 +253,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
                 reference!!.child(key.toString()).child("Lugar").setValue(textLugar)
                 reference!!.child(key.toString()).child("Telefono").setValue(textNumero)
-                reference!!.child(key.toString()).child("Estado_Corte_Energia").setValue("ON")
+                reference!!.child(key.toString()).child("Estado_Corte_Energia").setValue("true")
                 reference!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
                 //timestamp system.currentmillis
                 Toast.makeText(this, "subiendo a firebase", Toast.LENGTH_SHORT).show()

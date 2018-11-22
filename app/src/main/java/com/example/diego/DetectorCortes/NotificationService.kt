@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.text.TextUtils.replace
 import android.util.Log
 import com.example.diego.DetectorCortes.R.id.listaLugares
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -26,7 +27,8 @@ class NotificationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //conectar a firebase
         var database = FirebaseDatabase.getInstance()
-        var myRef = database.getReference("Devices")
+        val duenoDispositivo = FirebaseAuth.getInstance().uid
+        var myRef = database.getReference("/Devices/$duenoDispositivo")
 
         val readPath = myRef
         readPath.addValueEventListener(object: ValueEventListener{

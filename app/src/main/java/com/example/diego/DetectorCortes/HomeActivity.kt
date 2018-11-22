@@ -25,7 +25,7 @@ class HomeActivity : AppCompatActivity() {
 
         verifyUserIsLoggedIn()
 
-        supportActionBar?.title = "Dispositivos"
+        supportActionBar?.title = "Devices"
 //
 //        val adapter = GroupAdapter<ViewHolder>()
 //
@@ -42,44 +42,7 @@ class HomeActivity : AppCompatActivity() {
         if (userID == null) return
 
         val ref = FirebaseDatabase.getInstance().getReference("/Devices/$userID")
-        //val ref = FirebaseDatabase.getInstance().getReference("/Devices")
-//        ref.addChildEventListener(object: ChildEventListener {
-//
-//            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-//                val chatMessage = p0.getValue(ChatMessage::class.java)
-//
-//                if (chatMessage != null) {
-//                    Log.d(TAG, chatMessage.text)
-//
-//                    if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
-//                        val currentUser = LatestMessagesActivity.currentUser ?: return
-//                        adapter.add(ChatFromItem(chatMessage.text, currentUser))
-//                    } else {
-//                        adapter.add(ChatToItem(chatMessage.text, toUser!!))
-//                    }
-//                }
-//
-//                recyclerview_home_ID.adapter = adapter
-//
-//            }
-//
-//            override fun onCancelled(p0: DatabaseError) {
-//
-//            }
-//
-//            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-//
-//            }
-//
-//            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-//
-//            }
-//
-//            override fun onChildRemoved(p0: DataSnapshot) {
-//
-//            }
-//
-//        })
+
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
@@ -119,7 +82,7 @@ class HomeActivity : AppCompatActivity() {
         when(item?.itemId){
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, RegisterActivity::class.java)
+                val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
@@ -137,12 +100,6 @@ class HomeActivity : AppCompatActivity() {
     }
 }
 
-//class CustomAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>{
-//
-//    override fun onBindViewHolder(p0: RecyclerView.ViewHolder, p1: Int) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//}
 
 class DispositivoItem(val dispositivo: Dispositivo): Item<ViewHolder>(){
 
@@ -151,9 +108,11 @@ class DispositivoItem(val dispositivo: Dispositivo): Item<ViewHolder>(){
         viewHolder.itemView.nombredispositivoTxtV_row_home_ID.text = dispositivo.Lugar
         viewHolder.itemView.estado_ONOFF_row_home_ID.text = dispositivo.Estado_Corte_Energia
         viewHolder.itemView.GSMNumeroTxtV_row_home_ID.text = dispositivo.Telefono
+
     }
 
     override fun getLayout(): Int {
+
         return R.layout.dispositivo_row_home
     }
 }
