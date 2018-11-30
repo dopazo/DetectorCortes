@@ -67,9 +67,9 @@ class NotificationService : Service() {
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val corteEnComas = corteEn.toString()
-                .replace(",", ", ")  //remove the commas
-                .replace("[", "")  //remove the right bracket
-                .replace("]", "")  //remove the left bracket
+                .replace(",", ", ")
+                .replace("[", "")
+                .replace("]", "")
                 .trim()           //remove trailing spaces from partially initialized arrays
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

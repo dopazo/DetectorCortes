@@ -129,12 +129,16 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     {
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
+        val corteEnComas = corteEn.toString()
+                .replace(",", ", ")  //remove the commas
+                .replace("[", "")  //remove the right bracket
+                .replace("]", "")  //remove the left bracket
+                .trim()           //remove trailing spaces from partially initialized arrays
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         builder = Notification.Builder(this)
                 .setContentTitle("DetectorCortes")
-                .setContentText("Ha ocurrido un corte de energia en " + corteEn)
+                .setContentText("Ha ocurrido un corte de energia en " + corteEnComas)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setContentIntent(pendingIntent)
