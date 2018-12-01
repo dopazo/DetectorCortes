@@ -100,11 +100,12 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         //READ DATA FROM FIREBASE
         val readPath = myRef//
         readPath.addValueEventListener(object : ValueEventListener{
-            var hayCorte = 0
             val corteEn = ArrayList<String>()
             override fun onDataChange(snapshot: DataSnapshot) {
+                var hayCorte = 0
                 val children = snapshot!!.children
                 colorAdapter!!.clear()
+                corteEn.clear()
                 children.forEach {
                     val key = it.key.toString()
                     val estado = it.child("Estado_Corte_Energia").value.toString()
@@ -119,9 +120,10 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                         corteEn.add(lugar)
                     }
                     colorAdapter!!.add(dispositivo)
-                    Log.d("------------->", key)
+                    //Log.d("------------->", key)
                 }
                 listaLugares!!.adapter = colorAdapter
+                Log.d("hayCorte------------->", hayCorte.toString())
                 if(hayCorte == 1){
                     showNotification(corteEn)
                 }
@@ -172,7 +174,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 //            this.numero = numero
 //        }
 //    }
-
+/*
     class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val entities: ArrayList<Dispositivo>):
             ArrayAdapter<Dispositivo>(context, layoutResource, entities) { //clase
 
@@ -187,9 +189,9 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             val view = super.getView(position, convertView, parent)
             val textView = view.findViewById<View>(android.R.id.text1) as TextView
             val dispositivo = this.entities.get(position)
-            textView.text = dispositivo.Lugar + " - " + dispositivo.Estado_Corte_Energia
+            textView.text = dispositivo.lugar + " - " + dispositivo.estado
             textView.setTextColor(Color.BLUE)
-            if (dispositivo.Estado_Corte_Energia == "true" || dispositivo.Estado_Corte_Energia == "ON") {
+            if (dispositivo.estado == "true" || dispositivo.estado == "ON") {
                 textView.setBackgroundColor(Color.GREEN)
             }
             else{
@@ -198,7 +200,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             return view
         }
     }
-
+*/
     //interface que se ejecuta despues de que ingresamos algo al campo de texto
     override fun afterTextChanged(s: Editable?) {
 

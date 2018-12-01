@@ -3,6 +3,7 @@ package com.example.diego.DetectorCortes
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -43,26 +44,33 @@ class HomeActivity : AppCompatActivity() {
 
         val ref = FirebaseDatabase.getInstance().getReference("/Devices/$userID")
 
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+        ref.addValueEventListener(object: ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                val adapter = GroupAdapter<ViewHolder>()
-
+                //val adapter = GroupAdapter<ViewHolder>()
+                val array = ArrayList<Dispositivo>() //de la clase que creare
+                val adapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1, array)
+                adapter!!.clear()
                 p0.children.forEach {
                     Log.d("HomeActivity", it.toString())
-                    val dispositivo = it.getValue(Dispositivo::class.java)
-                    if(dispositivo!=null) {
-                        adapter.add(DispositivoItem(dispositivo))
+                    //val dispositivo = it.getValue(Dispositivo::class.java)
+                    val key = it.key.toString()
+                    val estado = it.child("Estado_Corte_Energia").value.toString()
+                    val lugar = it.child("Lugar").value.toString()
+                    val numero = it.child("Telefono").value.toString()
 
-                    }
+                    val dispositivo = Dispositivo(key, estado, lugar, numero) // y timestamp
+                    adapter!!.add(dispositivo)
+
                 }
 
 
-                recyclerview_home_ID.adapter = adapter
+                //recyclerview_home_ID.adapter = adapter
+                recyclerview_home_ID!!.adapter = adapter// as RecyclerView.Adapter<*>
             }
         })
     }
@@ -105,9 +113,9 @@ class DispositivoItem(val dispositivo: Dispositivo): Item<ViewHolder>(){
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         //will be called in our list for each dispositivo item later on..
-        viewHolder.itemView.nombredispositivoTxtV_row_home_ID.text = dispositivo.Lugar
-        viewHolder.itemView.estado_ONOFF_row_home_ID.text = dispositivo.Estado_Corte_Energia
-        viewHolder.itemView.GSMNumeroTxtV_row_home_ID.text = dispositivo.Telefono
+        viewHolder.itemView.nombredispositivoTxtV_row_home_ID.text = dispositivo.lugar
+        viewHolder.itemView.estado_ONOFF_row_home_ID.text = dispositivo.estado
+        viewHolder.itemView.GSMNumeroTxtV_row_home_ID.text = dispositivo.numero
 
     }
 

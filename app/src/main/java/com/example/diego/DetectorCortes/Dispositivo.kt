@@ -4,6 +4,6 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class Dispositivo(val key: String, val Lugar: String, val Telefono: String, val Estado_Corte_Energia: String):Parcelable{
+class Dispositivo(val key: String, val estado: String, val lugar: String, val numero: String):Parcelable{
     constructor() : this("","", "","")
 }
