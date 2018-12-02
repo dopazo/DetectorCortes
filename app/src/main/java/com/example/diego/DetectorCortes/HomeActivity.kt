@@ -1,5 +1,6 @@
 package com.example.diego.DetectorCortes
 
+import android.app.ProgressDialog.show
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +8,10 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ListView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
@@ -27,16 +32,20 @@ class HomeActivity : AppCompatActivity() {
         verifyUserIsLoggedIn()
 
         supportActionBar?.title = "Devices"
-//
-//        val adapter = GroupAdapter<ViewHolder>()
-//
-//        adapter.add(DispositivoItem())
-//        adapter.add(DispositivoItem())
-//        adapter.add(DispositivoItem())
-//
+
 //        recyclerview_home_ID.adapter = adapter
         fetchDispositivos()
+        val lv = findViewById<ListView>(R.id.recyclerview_home_ID)
+
+        lv.onItemClickListener = AdapterView.OnItemClickListener {
+            adapterView, view, i, l ->
+            Toast.makeText(this,
+                    "posicion seleccionada: "+ i,
+                    //TODO: como selecciona el valor lugar para poder modificarlo
+                    Toast.LENGTH_LONG).show()
+        }
     }
+
 
     private fun fetchDispositivos(){
         val userID = FirebaseAuth.getInstance().uid
@@ -65,14 +74,17 @@ class HomeActivity : AppCompatActivity() {
 
                     val dispositivo = Dispositivo(key, estado, lugar, numero) // y timestamp
                     adapter!!.add(dispositivo)
-
                 }
 
 
                 //recyclerview_home_ID.adapter = adapter
-                recyclerview_home_ID!!.adapter = adapter// as RecyclerView.Adapter<*>
+                recyclerview_home_ID!!.adapter = adapter
             }
         })
+    }
+
+     fun ListView.onClick(v: AdapterView<ColorAdapter>,view: View,position: Int,id: Long) {
+         Toast.makeText(context, "position: "+ position.toString(), Toast.LENGTH_SHORT).show()
     }
 
     private fun verifyUserIsLoggedIn(){

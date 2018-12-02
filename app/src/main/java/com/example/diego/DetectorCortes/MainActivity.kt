@@ -58,12 +58,6 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     internal var NumeroLv: Array<String>? = null
     internal var estadoLv: Array<String>? = null
 
-//    //conectar a firebase
-//    val duenoDispositivo = FirebaseAuth.getInstance().uid
-//    if (duenoDispositivo == null) return
-//    var database = FirebaseDatabase.getInstance()
-//    var myRef = database.getReference("/Devices/$duenoDispositivo")
-
     companion object {
         val TAG = "ChatLog"
     }
@@ -159,48 +153,6 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         notificationManager.notify(1234, builder.build())
     }
 
-//    inner class Dispositivo {
-//
-//        var key:String
-//        var estado:String
-//        var lugar:String
-//        var numero:String
-//        //var time:String
-//
-//        constructor(key:String, estado:String, lugar:String, numero:String): super() {
-//            this.key = key
-//            this.estado = estado
-//            this.lugar = lugar
-//            this.numero = numero
-//        }
-//    }
-/*
-    class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val entities: ArrayList<Dispositivo>):
-            ArrayAdapter<Dispositivo>(context, layoutResource, entities) { //clase
-
-        var color:Int = 0
-
-        fun setAlternateColor(color:Int) {
-            this.color = color
-        }
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            //explicitar campo a usar
-            val view = super.getView(position, convertView, parent)
-            val textView = view.findViewById<View>(android.R.id.text1) as TextView
-            val dispositivo = this.entities.get(position)
-            textView.text = dispositivo.lugar + " - " + dispositivo.estado
-            textView.setTextColor(Color.BLUE)
-            if (dispositivo.estado == "true" || dispositivo.estado == "ON") {
-                textView.setBackgroundColor(Color.GREEN)
-            }
-            else{
-                textView.setBackgroundColor(Color.RED)
-            }
-            return view
-        }
-    }
-*/
     //interface que se ejecuta despues de que ingresamos algo al campo de texto
     override fun afterTextChanged(s: Editable?) {
 
@@ -237,10 +189,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
             if (numero?.equals("") ?: ("" === null)){
                 editNumero!!.requestFocus()
             }else{
-//                //conectar a firebase
-//                var database = FirebaseDatabase.getInstance()
-//                var myRef = database.getReference("/Devices/$duenoDispositivo")
-
+                //conectar a firebase
                 val duenoDispositivo = FirebaseAuth.getInstance().uid
                 if (duenoDispositivo == null) return
 
@@ -258,7 +207,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                 reference!!.child(key.toString()).child("Estado_Corte_Energia").setValue("true")
                 reference!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
                 //timestamp system.currentmillis
-                Toast.makeText(this, "subiendo a firebase", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Ingresando dispositivo", Toast.LENGTH_SHORT).show()
             }
         }
     }
