@@ -1,7 +1,13 @@
 package com.example.diego.DetectorCortes
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.ProgressDialog.show
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
@@ -25,6 +31,10 @@ import kotlinx.android.synthetic.main.dispositivo_row_home.view.*
 
 class HomeActivity : AppCompatActivity() {
 
+    lateinit var notificationManager: NotificationManager
+    lateinit var notificationChannel: NotificationChannel
+    lateinit var builder: Notification.Builder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -33,7 +43,6 @@ class HomeActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Devices"
 
-//        recyclerview_home_ID.adapter = adapter
         fetchDispositivos()
         val lv = findViewById<ListView>(R.id.recyclerview_home_ID)
 
@@ -46,6 +55,28 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    public fun showNotification(corteEn: ArrayList<String>)
+    {
+        val intent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val corteEnComas = corteEn.toString()
+                .replace(",", ", ")
+                .replace("[", "")
+                .replace("]", "")
+                .trim()           //remove trailing spaces from partially initialized arrays
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        builder = Notification.Builder(this)
+                .setContentTitle("DetectorCortes")
+                .setContentText("Ha ocurrido un corte de energia en " + corteEnComas)
+                .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
+                .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                .setContentIntent(pendingIntent)
+                .setDefaults(Notification.DEFAULT_SOUND)
+        //.setSound(soundUri);
+
+        notificationManager.notify(1234, builder.build())
+    }
 
     private fun fetchDispositivos(){
         val userID = FirebaseAuth.getInstance().uid
@@ -58,27 +89,32 @@ class HomeActivity : AppCompatActivity() {
             override fun onCancelled(p0: DatabaseError) {
 
             }
-
+            val corteEn = ArrayList<String>()
             override fun onDataChange(p0: DataSnapshot) {
-                //val adapter = GroupAdapter<ViewHolder>()
+                var hayCorte = 0
                 val array = ArrayList<Dispositivo>() //de la clase que creare
                 val adapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1, array)
                 adapter!!.clear()
+                corteEn.clear()
                 p0.children.forEach {
                     Log.d("HomeActivity", it.toString())
-                    //val dispositivo = it.getValue(Dispositivo::class.java)
                     val key = it.key.toString()
                     val estado = it.child("Estado_Corte_Energia").value.toString()
                     val lugar = it.child("Lugar").value.toString()
                     val numero = it.child("Telefono").value.toString()
 
                     val dispositivo = Dispositivo(key, estado, lugar, numero) // y timestamp
+                    if(estado == "OFF" || estado == "false"){
+                        hayCorte = 1
+                        corteEn.add(lugar)
+                    }
                     adapter!!.add(dispositivo)
                 }
 
-
-                //recyclerview_home_ID.adapter = adapter
                 recyclerview_home_ID!!.adapter = adapter
+                if(hayCorte == 1){
+                    showNotification(corteEn)
+                }
             }
         })
     }

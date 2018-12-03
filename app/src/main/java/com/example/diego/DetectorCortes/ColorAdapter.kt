@@ -23,6 +23,9 @@ class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int,
         val textView = view.findViewById<View>(android.R.id.text1) as TextView
         val dispositivo = this.entities.get(position)
         textView.text = dispositivo.lugar + " - " + dispositivo.estado
+
+        //TODO: modificarlo para que se vea mejor (como lo tenia antes la popi)
+
         textView.setTextColor(Color.BLUE)
         if (dispositivo.estado == "true" || dispositivo.estado == "ON") {
             textView.setBackgroundColor(Color.GREEN)

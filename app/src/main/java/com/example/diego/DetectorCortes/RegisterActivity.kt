@@ -49,7 +49,6 @@ class RegisterActivity : AppCompatActivity(){
 
             //else if successful
             //Log.d("RegisterActivity", "Successfully created user with uid: ${it.result.user.uid}")
-
             saveUserToFirebaseDatabase()
         }.addOnFailureListener{
             Log.d("RegisterActivity", "Failed to create user: ${it.message}")
