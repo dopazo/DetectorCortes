@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Detector Cortes de Energia</string>
+    <string name="app_name">PowerOut</string>
     <string name="app_Lugar">Lugar</string>
     <string name="app_Numero">Numero</string>
     <string name="app_Button">Agregar</string>

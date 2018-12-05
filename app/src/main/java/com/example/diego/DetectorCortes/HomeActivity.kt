@@ -46,13 +46,13 @@ class HomeActivity : AppCompatActivity() {
         fetchDispositivos()
         val lv = findViewById<ListView>(R.id.recyclerview_home_ID)
 
-        lv.onItemClickListener = AdapterView.OnItemClickListener {
+        /*lv.onItemClickListener = AdapterView.OnItemClickListener {
             adapterView, view, i, l ->
             Toast.makeText(this,
                     "posicion seleccionada: "+ i,
                     //TODO: como selecciona el valor lugar para poder modificarlo
                     Toast.LENGTH_LONG).show()
-        }
+        }*/
     }
 
     public fun showNotification(corteEn: ArrayList<String>)
@@ -67,13 +67,15 @@ class HomeActivity : AppCompatActivity() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         builder = Notification.Builder(this)
-                .setContentTitle("DetectorCortes")
-                .setContentText("Ha ocurrido un corte de energia en " + corteEnComas)
+                .setContentTitle("PowerOut")
+                .setContentText("There has been a power outage in " + corteEnComas)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setContentIntent(pendingIntent)
                 .setDefaults(Notification.DEFAULT_SOUND)
         //.setSound(soundUri);
+        //.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.powerprograprofesional))
+        //.setSmallIcon(R.drawable.powerprograprofesional_round)
 
         notificationManager.notify(1234, builder.build())
     }

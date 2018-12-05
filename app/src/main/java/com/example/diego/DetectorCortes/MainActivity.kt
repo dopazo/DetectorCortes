@@ -119,8 +119,10 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         builder = Notification.Builder(this)
-                .setContentTitle("DetectorCortes")
-                .setContentText("Ha ocurrido un corte de energia en " + corteEnComas)
+                .setContentTitle("PowerOut")
+                .setContentText("FROM MAINACTIVITY | There has been a power outage in " + corteEnComas)
+                //.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.powerprograprofesional))
+                //.setSmallIcon(R.drawable.powerprograprofesional_round)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setContentIntent(pendingIntent)
@@ -184,7 +186,7 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                 reference!!.child(key.toString()).child("Estado_Corte_Energia").setValue("true")
                 reference!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
                 //timestamp system.currentmillis
-                Toast.makeText(this, "Ingresando dispositivo", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Updating devices", Toast.LENGTH_SHORT).show()
             }
         }
     }

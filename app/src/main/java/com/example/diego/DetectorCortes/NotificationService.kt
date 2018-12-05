@@ -77,8 +77,10 @@ class NotificationService : Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         builder = Notification.Builder(this)
-                .setContentTitle("DetectorCortes")
-                .setContentText("Ha ocurrido un corte de energia en " + corteEnComas)
+                .setContentTitle("PowerOut")
+                .setContentText("There has been a power outage in " + corteEnComas)
+                //.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.powerprograprofesional))
+                //.setSmallIcon(R.drawable.powerprograprofesional_round)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setContentIntent(pendingIntent)

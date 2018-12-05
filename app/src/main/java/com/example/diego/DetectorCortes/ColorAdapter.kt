@@ -12,7 +12,7 @@ class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int,
         ArrayAdapter<Dispositivo>(context, layoutResource, entities) { //clase
 
     var color:Int = 0
-
+    var state:String = ""
     fun setAlternateColor(color:Int) {
         this.color = color
     }
@@ -22,7 +22,13 @@ class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int,
         val view = super.getView(position, convertView, parent)
         val textView = view.findViewById<View>(android.R.id.text1) as TextView
         val dispositivo = this.entities.get(position)
-        textView.text = dispositivo.lugar + " - " + dispositivo.estado
+        if (dispositivo.estado == "true" || dispositivo.estado == "ON") {
+            state = "Power on ✅⚡"
+        }
+        else{
+            state = "Power out ❌⚡"
+        }
+        textView.text = dispositivo.lugar + " - " + state
 
         //TODO: modificarlo para que se vea mejor (como lo tenia antes la popi)
 
