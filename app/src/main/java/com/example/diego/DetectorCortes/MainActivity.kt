@@ -2,24 +2,18 @@ package com.example.diego.DetectorCortes
 
 import android.app.Notification
 import android.content.Context
-import android.graphics.Color
-import android.os.Build.ID
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.annotation.LayoutRes
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.FirebaseDatabase
-import android.widget.TextView
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -28,9 +22,7 @@ import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.support.annotation.RequiresApi
-import com.example.diego.DetectorCortes.R.id.editText_Lugar
-import com.example.diego.DetectorCortes.R.id.editText_Numero
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
 
@@ -40,26 +32,11 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     private val channelId = "com.example.diego.DetectorCortes"
     private val description = "Test Notification"
 
-
-    //inicializacion de variables, junto con su tipo de variable
-    //terminar el tipo en "?" para permitir que este vacia o null
-
     private var editLugar: EditText? = null
     private var editNumero: EditText? = null
     private var button: Button? = null
     private var lugar = ""
-    private var Numero = ""
-
-
-    //clase con esto
-    internal var keyLv: Array<String>? = null
-    internal var lugarLv: Array<String>? = null
-    internal var NumeroLv: Array<String>? = null
-    internal var estadoLv: Array<String>? = null
-
-    //conectar a firebase
-    var database = FirebaseDatabase.getInstance()
-    var myRef = database.getReference("Devices")
+    private var numero = ""
 
     companion object {
         val TAG = "ChatLog"
@@ -73,9 +50,14 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         setContentView(R.layout.activity_main)
         supportActionBar?.title = "Add Device"
 
+        //conectar a firebase
+        val duenoDispositivo = FirebaseAuth.getInstance().uid
+        if (duenoDispositivo == null) return
+        var database = FirebaseDatabase.getInstance()
+        var myRef = database.getReference("/Devices/$duenoDispositivo")
+
         //se asocian las variables a su objeto en la pantalla
         //"R." para buscar en la pantalla según tengo entendido
-        //"!!" significa que debe tener un valor obligatoriamente (no puede estar null)
         editLugar = findViewById(R.id.editText_Lugar) as EditText
         editNumero = findViewById(R.id.editText_Numero) as EditText
         button = findViewById(R.id.button_Agregar) as Button
@@ -83,19 +65,17 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         editLugar?.addTextChangedListener(this)
         editNumero?.addTextChangedListener(this)
 
-
-
         val arreglo = ArrayList<Dispositivo>() //de la clase que creare
         colorAdapter = ColorAdapter(applicationContext, android.R.layout.simple_list_item_1,  arreglo)
-        //colorAdapter.setAlternateColor(getColor())
         //READ DATA FROM FIREBASE
         val readPath = myRef//
         readPath.addValueEventListener(object : ValueEventListener{
-            var hayCorte = 0
             val corteEn = ArrayList<String>()
             override fun onDataChange(snapshot: DataSnapshot) {
+                var hayCorte = 0
                 val children = snapshot!!.children
                 colorAdapter!!.clear()
+                corteEn.clear()
                 children.forEach {
                     val key = it.key.toString()
                     val estado = it.child("Estado_Corte_Energia").value.toString()
@@ -110,11 +90,13 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                         corteEn.add(lugar)
                     }
                     colorAdapter!!.add(dispositivo)
-                    Log.d("------------->", key)
+                    //Log.d("------------->", key)
                 }
                 listaLugares!!.adapter = colorAdapter
+                Log.d("hayCorte------------->", hayCorte.toString())
                 if(hayCorte == 1){
-                    showNotification(corteEn)
+                    //showNotification(corteEn)
+                    //lo cambié, mejor que HomeActivity sea el encargado
                 }
             }
 
@@ -130,9 +112,9 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val corteEnComas = corteEn.toString()
-                .replace(",", ", ")  //remove the commas
-                .replace("[", "")  //remove the right bracket
-                .replace("]", "")  //remove the left bracket
+                .replace(",", ", ")
+                .replace("[", "")
+                .replace("]", "")
                 .trim()           //remove trailing spaces from partially initialized arrays
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -143,52 +125,11 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setContentIntent(pendingIntent)
                 .setDefaults(Notification.DEFAULT_SOUND)
-                //.setSound(soundUri);
+        //.setSound(soundUri);
 
         notificationManager.notify(1234, builder.build())
     }
 
-    inner class Dispositivo {
-
-        var key:String
-        var estado:String
-        var lugar:String
-        var numero:String
-        //var time:String
-
-        constructor(key:String, estado:String, lugar:String, numero:String): super() {
-            this.key = key
-            this.estado = estado
-            this.lugar = lugar
-            this.numero = numero
-        }
-    }
-
-    class ColorAdapter(context: Context, @LayoutRes private val layoutResource: Int, private val entities: ArrayList<Dispositivo>):
-            ArrayAdapter<Dispositivo>(context, layoutResource, entities) { //clase
-
-        var color:Int = 0
-
-        fun setAlternateColor(color:Int) {
-            this.color = color
-        }
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            //explicitar campo a usar
-            val view = super.getView(position, convertView, parent)
-            val textView = view.findViewById<View>(android.R.id.text1) as TextView
-            val dispositivo = this.entities.get(position)
-            textView.text = dispositivo.lugar + " - " + dispositivo.estado
-            textView.setTextColor(Color.BLUE)
-            if (dispositivo.estado == "true" || dispositivo.estado == "ON") {
-                textView.setBackgroundColor(Color.GREEN)
-            }
-            else{
-                textView.setBackgroundColor(Color.RED)
-            }
-            return view
-        }
-    }
     //interface que se ejecuta despues de que ingresamos algo al campo de texto
     override fun afterTextChanged(s: Editable?) {
 
@@ -212,32 +153,38 @@ class MainActivity : AppCompatActivity(), TextWatcher, View.OnClickListener {
     //AL CLICKEAR EL BOTON AGREGAR
     override fun onClick(v: View?) {
         when(v!!.id) {
-            R.id.button_Agregar -> operacion()
+            R.id.button_Agregar -> sendNewDevice()
         }
     }
-    private fun operacion(){
+    private fun sendNewDevice(){
         //si hay dato vacio, se hace "focus" para indicar que lo llenee
         lugar = editLugar?.text.toString()
-        Numero = editNumero?.text.toString()
+        numero = editNumero?.text.toString()
         if(lugar?.equals("") ?: ("" === null)){
             editLugar!!.requestFocus()
         }else{
-            if (Numero?.equals("") ?: ("" === null)){
+            if (numero?.equals("") ?: ("" === null)){
                 editNumero!!.requestFocus()
             }else{
+                //conectar a firebase
+                val duenoDispositivo = FirebaseAuth.getInstance().uid
+                if (duenoDispositivo == null) return
+
+                val reference = FirebaseDatabase.getInstance().getReference("/Devices/$duenoDispositivo")
+
                 val textLugar = editText_Lugar.text.toString()
                 val textNumero = editText_Numero.text.toString()
-                val key = myRef.push().key
+                val key = reference.push().key
                 Log.d(TAG, textLugar)
                 Log.d(TAG, textNumero)
                 Log.d(TAG, key)
 
-                myRef!!.child(key.toString()).child("Lugar").setValue(textLugar)
-                myRef!!.child(key.toString()).child("Telefono").setValue(textNumero)
-                myRef!!.child(key.toString()).child("Estado_Corte_Energia").setValue("ON")
-                myRef!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
+                reference!!.child(key.toString()).child("Lugar").setValue(textLugar)
+                reference!!.child(key.toString()).child("Telefono").setValue(textNumero)
+                reference!!.child(key.toString()).child("Estado_Corte_Energia").setValue("true")
+                reference!!.child(key.toString()).child("Timestamp").setValue(System.currentTimeMillis())
                 //timestamp system.currentmillis
-                Toast.makeText(this, "subiendo a firebase", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Ingresando dispositivo", Toast.LENGTH_SHORT).show()
             }
         }
     }

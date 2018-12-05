@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.text.TextUtils.replace
 import android.util.Log
 import com.example.diego.DetectorCortes.R.id.listaLugares
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -26,14 +27,16 @@ class NotificationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //conectar a firebase
         var database = FirebaseDatabase.getInstance()
-        var myRef = database.getReference("Devices")
+        //TODO: como hacer que guarde previamente el uid para usar con la app cerrada :(
+        val duenoDispositivo = FirebaseAuth.getInstance().uid
+        var myRef = database.getReference("/Devices/$duenoDispositivo")
 
         val readPath = myRef
         readPath.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 var hayCorte = 0
-                val corteEn = ArrayList<String>()
-
+                var corteEn = ArrayList<String>()
+                corteEn.removeAll(corteEn)
                 val children = snapshot!!.children
                 children.forEach {
                     val key = it.key.toString()
@@ -46,7 +49,7 @@ class NotificationService : Service() {
                         hayCorte = 1
                         corteEn.add(lugar)
                     }
-                    Log.d("------------->", key)
+                    Log.d("corteEn------------->", corteEn.toString())
                 }
                 if(hayCorte == 1){
                     showNotification(corteEn)
