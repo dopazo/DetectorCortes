@@ -69,13 +69,13 @@ class HomeActivity : AppCompatActivity() {
         builder = Notification.Builder(this)
                 .setContentTitle("PowerOut")
                 .setContentText("There has been a power outage in " + corteEnComas)
-                .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
-                .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_powerout))
+                .setSmallIcon(R.drawable.ic_powerout)
                 .setContentIntent(pendingIntent)
                 .setDefaults(Notification.DEFAULT_SOUND)
         //.setSound(soundUri);
-        //.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.powerprograprofesional))
-        //.setSmallIcon(R.drawable.powerprograprofesional_round)
+        //.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_launcher_background))
+        //.setSmallIcon(android.R.drawable.sym_def_app_icon)
 
         notificationManager.notify(1234, builder.build())
     }
